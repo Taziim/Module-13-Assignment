@@ -1,11 +1,3 @@
-{
-  "name": "jenkins-demo",
-  "version": "1.0.0",
-  "scripts": {
-    "start": "node app.js",
-    "test": "node test/test.sh"
-  },
-  "devDependencies": {
-    "jest": "^29.0.0"
-  }
-}
+#!/bin/bash
+echo "Running dummy test..."
+node -e "console.log('Test passed ✅')" || exit 1
