@@ -1,0 +1,42 @@
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = "myapp:latest"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Checking out code from GitHub...'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'echo "Installing dependencies..."'
+                sh 'npm install || true'   // 'true' avoids failure if no deps yet
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh 'chmod +x ./test/test.sh'
+                sh './test/test.sh'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh 'docker build -t $IMAGE_NAME .'
+                sh 'docker rm -f myapp-container || true'
+                sh 'docker run -d --name myapp-container -p 3000:3000 $IMAGE_NAME'
+            }
+        }
+    }
+
+    post {
+        success { echo '✅ Pipeline completed successfully!' }
+        failure { echo '❌ Pipeline failed.' }
+    }
+}
